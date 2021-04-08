@@ -13,7 +13,7 @@ app.get("/db", (req, res) => {
 
 connection.connect(function(err) {
   if (err) {
-	  console.log(err)
+	  console.log(err.message + "  hello")
 	  console.error('Database connection failed: ' + err.stack);
 	  res.send("db connection failed")
 	 //return console.error('error: ' + err.message);
