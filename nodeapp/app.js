@@ -3,28 +3,52 @@ var mysql = require('mysql');
 const app = express()
 const port = 3000
 
-var connection = mysql.createConnection({
+// var connection = mysql.createConnection({
+//   host     : process.env.RDS_HOSTNAME,
+//   user     : process.env.RDS_USERNAME,
+//   password : process.env.RDS_PASSWORD,
+//   port     : process.env.RDS_PORT
+// });
+// app.get("/db", (req, res) => {
+
+// connection.connect(function(err) {
+//   if (err) {
+// 	  console.log(err.message + "  hello")
+// 	  console.error('Database connection failed: ' + err.stack);
+// 	  res.send("db connection failed")
+// 	 //return console.error('error: ' + err.message);
+    
+//     return;
+//  }
+// 	res.send("db connection successful");
+//   console.log('Connected to database.');
+
+//  //connection.end();
+// });})
+
+
+var pool        = mysql.createPool({
   host     : process.env.RDS_HOSTNAME,
   user     : process.env.RDS_USERNAME,
   password : process.env.RDS_PASSWORD,
   port     : process.env.RDS_PORT
 });
-app.get("/db", (req, res) => {
 
-connection.connect(function(err) {
-  if (err) {
-	  console.log(err.message + "  hello")
-	  console.error('Database connection failed: ' + err.stack);
-	  res.send("db connection failed")
-	 //return console.error('error: ' + err.message);
-    
-    return;
- }
-	res.send("db connection successful");
-  console.log('Connected to database.');
+app.get('/db', function (req, res) {
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.message + "  hello")
+      console.error('Database connection failed: ' + err.stack);
+      res.send("db connection failed")
+     //return console.error('error: ' + err.message);
+      
+      return;
+   }
+    res.send("db connection successful");
+    console.log('Connected to database.');
+  });
+});
 
- //connection.end();
-});})
 
 const redis = require('redis');
 const client = redis.createClient({
